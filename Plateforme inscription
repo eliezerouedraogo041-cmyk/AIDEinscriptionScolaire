@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plateforme d'aide aux inscriptions scolaires - Ouagadougou</title>
+
+<style>
+:root {
+  --bleu-fonce:   #0d3b66;
+  --bleu:         #1a4d8f;
+  --bleu-clair:   #e8f0fb;
+  --vert:         #2e7d32;
+  --vert-clair:   #e8f5e9;
+  --orange:       #f9a825;
+  --orange-clair: #fff8e1;
+  --rouge:        #c62828;
+  --rouge-clair:  #ffebee;
+  --gris-fonce:   #333;
+  --gris:         #666;
+  --blanc:        #ffffff;
+  --ombre:        0 4px 16px rgba(13, 59, 102, 0.08);
+  --ombre-forte:  0 6px 24px rgba(13, 59, 102, 0.15);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(135deg, #eef4ff 0%, #f4f6f8 100%);
+  color: var(--gris-fonce);
+  min-height: 100vh;
+  padding: 20px;
+  line-height: 1.6;
+}
+header {
+  text-align: center;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, var(--bleu-fonce), var(--bleu));
+  color: var(--blanc);
+  border-radius: 16px;
+  margin-bottom: 30px;
+  box-shadow: var(--ombre-forte);
+}
+header h1 { font-size: 26px; margin-bottom: 8px; }
+header p { opacity: 0.9; font-size: 15px; }
+main { max-width: 820px; margin: auto; }
+.ecran { display: none; }
+.ecran.actif { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+section {
+  background: var(--blanc);
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: var(--ombre);
+  margin-bottom: 20px;
+}
+h2 {
+  color: var(--bleu-fonce);
+  font-size: 22px;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--bleu-clair);
+}
+h3 { color: var(--bleu); margin-bottom: 12px; }
+.accueil-bienvenue { text-align: center; margin-bottom: 30px; }
+.accueil-bienvenue p { color: var(--gris); font-size: 16px; }
+.choix-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 600px) { .choix-actions { grid-template-columns: 1fr; } }
+.carte-action {
+  padding: 30px 20px;
+  border-radius: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  border: 2px solid transparent;
+}
+.carte-action:hover { transform: translateY(-5px); box-shadow: var(--ombre-forte); }
+.carte-place { background: linear-gradient(135deg, var(--bleu-clair), #d4e4f9); border-color: var(--bleu); }
+.carte-transferts { background: linear-gradient(135deg, var(--orange-clair), #ffecb3); border-color: var(--orange); }
+.carte-action .icone { font-size: 42px; display: block; margin-bottom: 12px; }
+.carte-action h3 { font-size: 20px; margin-bottom: 8px; }
+.carte-place h3 { color: var(--bleu-fonce); }
+.carte-transferts h3 { color: #b37400; }
+.carte-action p { font-size: 14px; color: var(--gris); }
+form { display: flex; flex-direction: column; gap: 14px; margin-top: 15px; }
+label { display: flex; flex-direction: column; font-weight: 600; font-size: 14px; color: var(--bleu-fonce); }
+input, select {
+  padding: 12px 14px;
+  border: 2px solid #dbe4ef;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-top: 6px;
+  transition: border 0.2s;
+  font-family: inherit;
+}
+input:focus, select:focus { outline: none; border-color: var(--bleu); background: var(--bleu-clair); }
+button {
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--bleu), var(--bleu-fonce));
+  color: var(--blanc);
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+  font-family: inherit;
+}
+button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--ombre-forte); }
+button:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-vert { background: linear-gradient(135deg, #43a047, var(--vert)); }
+.btn-orange { background: linear-gradient(135deg, #fbc02d, #f57c00); }
+.btn-secondaire { background: var(--blanc); color: var(--bleu); border: 2px solid var(--bleu); }
+.btn-secondaire:hover { background: var(--bleu-clair); }
+.btn-retour {
+  background: transparent;
+  color: var(--bleu);
+  padding: 8px 12px;
+  font-size: 14px;
+  margin-bottom: 15px;
+  border: none;
+}
+.btn-retour:hover { text-decoration: underline; }
+.choix-lycee-bloc {
+  border: 2px dashed var(--bleu);
+  background: var(--bleu-clair);
+  padding: 18px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+.choix-lycee-bloc p { font-size: 14px; color: var(--bleu-fonce); margin-bottom: 10px; }
+.badge {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  color: var(--blanc);
+  margin-left: 6px;
+  font-weight: 700;
+  display: inline-block;
+  text-transform: uppercase;
+}
+.badge-catho   { background: var(--vert); }
+.badge-public  { background: var(--bleu); }
+.badge-prive   { background: #6a1b9a; }
+.badge-plein   { background: var(--rouge); }
+.badge-dispo   { background: var(--vert); }
+.filtres { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.filtre-btn {
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 2px solid #dbe4ef;
+  background: var(--blanc);
+  color: var(--gris-fonce);
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+  margin-top: 0;
+}
+.filtre-btn:hover { border-color: var(--bleu); color: var(--bleu); }
+.filtre-btn.actif { background: var(--bleu); color: var(--blanc); border-color: var(--bleu); }
+#liste-lycees { display: grid; gap: 12px; }
+.carte-etab {
+  border: 2px solid #dbe4ef;
+  padding: 15px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.2s;
+  background: var(--blanc);
+}
+.carte-etab:hover { background: #eef4ff; border-color: var(--bleu); transform: translateX(4px); }
+.carte-etab .nom { font-size: 15px; }
+.carte-etab .secteur { font-size: 13px; color: var(--gris); margin-top: 6px; }
+.avertissement-plein {
+  background: var(--rouge-clair);
+  border-left: 4px solid var(--rouge);
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #b71c1c;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.avertissement-dispo {
+  background: var(--vert-clair);
+  border-left: 4px solid var(--vert);
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1b5e20;
+  margin-top: 10px;
+  font-weight: 600;
+}
+.carte-contact {
+  background: var(--vert-clair);
+  border-left: 5px solid var(--vert);
+  padding: 22px;
+  border-radius: 10px;
+  margin-top: 20px;
+}
+.carte-contact h3 { color: var(--vert); margin-bottom: 10px; font-size: 18px; }
+.carte-contact p { margin: 8px 0; font-size: 15px; }
+.carte-contact .contact-line { margin: 6px 0; font-size: 16px; font-weight: 600; }
+.carte-contact .contact-line a { color: var(--bleu); text-decoration: none; }
+.securite {
+  font-style: italic;
+  color: #5d4037;
+  font-size: 14px;
+  margin-top: 14px;
+  background: var(--orange-clair);
+  padding: 12px 14px;
+  border-radius: 8px;
+  border-left: 4px solid var(--orange);
+}
+.sans-contact {
+  background: var(--orange-clair);
+  border-left: 4px solid var(--orange);
+  padding: 14px;
+  border-radius: 8px;
+  color: #b37400;
+  font-weight: 600;
+  font-size: 14px;
+  margin: 10px 0;
+}
+.fiche {
+  background: #fafafa;
+  border: 2px dashed #bbb;
+  padding: 22px;
+  border-radius: 10px;
+  margin-top: 22px;
+}
+.fiche h3 { color: var(--bleu-fonce); margin-bottom: 14px; }
+.fiche p { margin: 8px 0; font-size: 15px; }
+.mention {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #ddd;
+  font-style: italic;
+  color: var(--vert);
+  font-weight: 600;
+}
+.actions { display: flex; gap: 12px; margin-top: 22px; flex-wrap: wrap; }
+.actions button { flex: 1; min-width: 180px; margin-top: 0; }
+#message-place, #message-transfert {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.msg-err { background: var(--rouge-clair); color: #b71c1c; }
+@media print {
+  body * { visibility: hidden; }
+  #fiche-imprimable, #fiche-imprimable * { visibility: visible; }
+  #fiche-imprimable { position: absolute; left: 0; top: 0; width: 100%; border: none; padding: 20px; }
+  header, .actions, .carte-contact, .btn-retour { display: none !important; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🎓 Plateforme d'aide aux inscriptions</h1>
+  <p>Ouagadougou — Demande de place & transfert scolaire</p>
+</header>
+
+<main>
+
+<div id="ecran-accueil" class="ecran actif">
+  <section>
+    <div class="accueil-bienvenue">
+      <h2>Bienvenue 👋</h2>
+      <p>Choisissez le type de démarche que vous souhaitez effectuer.</p>
+    </div>
+    <div class="choix-actions">
+      <div class="carte-action carte-place" onclick="allerVers('place')">
+        <span class="icone">📚</span>
+        <h3>Demande de place</h3>
+        <p>Inscription dans un nouvel établissement</p>
+      </div>
+      <div class="carte-action carte-transferts" onclick="allerVers('transfert')">
+        <span class="icone">🔄</span>
+        <h3>Demande de transfert</h3>
+        <p>Changer d'établissement en cours d'année</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div id="ecran-place" class="ecran">
+  <section>
+    <button class="btn-retour" onclick="allerVers('accueil')">← Retour à l'accueil</button>
+    <h2>📚 Demande de place</h2>
+    <form id="form-place">
+      <label>Nom de l'élève :<input type="text" id="p-nom" required></label>
+      <label>Prénom de l'élève :<input type="text" id="p-prenom" required></label>
+      <label>Classe visée :
+        <select id="p-classe" required>
+          <option value="">-- Choisir --</option>
+          <option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option>
+          <option>2nde</option><option>1ère</option><option>Terminale</option>
+        </select>
+      </label>
+      <label>Ancien établissement (origine) :<input type="text" id="p-origine" required></label>
+      <label>Nom du parent / tuteur :<input type="text" id="p-parent" required></label>
+      <label>Téléphone du parent / tuteur :<input type="tel" id="p-tel" required></label>
+      <div class="choix-lycee-bloc">
+        <p>👉 Cliquez ci-dessous pour choisir l'établissement souhaité :</p>
+        <button type="button" class="btn-orange" onclick="ouvrirListeLycees('place')">🏫 Choisir le lycée</button>
+        <p id="p-lycee-choisi" style="margin-top:12px; font-weight:bold; color:var(--vert);"></p>
+        <div id="p-avertissement"></div>
+      </div>
+      <button type="submit" id="btn-envoyer-place" class="btn-vert">Envoyer ma demande</button>
+      <p id="message-place" class="cache"></p>
+    </form>
+  </section>
+</div>
+
+<div id="ecran-transfert" class="ecran">
+  <section>
+    <button class="btn-retour" onclick="allerVers('accueil')">← Retour à l'accueil</button>
+    <h2>🔄 Demande de transfert</h2>
+    <form id="form-transfert">
+      <label>Nom de l'élève :<input type="text" id="t-nom" required></label>
+      <label>Prénom de l'élève :<input type="text" id="t-prenom" required></label>
+      <label>Classe actuelle :
+        <select id="t-classe" required>
+          <option value="">-- Choisir --</option>
+          <option>6ème</option><option>5ème</option><option>4ème</option><option>3ème</option>
+          <option>2nde</option><option>1ère</option><option>Terminale</option>
+        </select>
+      </label>
+      <label>Établissement actuel (d'origine) :<input type="text" id="t-origine" required></label>
+      <label>Nom du parent / tuteur :<input type="text" id="t-parent" required></label>
+      <label>Téléphone du parent / tuteur :<input type="tel" id="t-tel" required></label>
+      <div class="choix-lycee-bloc">
+        <p>👉 Cliquez ci-dessous pour choisir l'établissement de destination :</p>
+        <button type="button" class="btn-orange" onclick="ouvrirListeLycees('transfert')">🏫 Choisir le lycée</button>
+        <p id="t-lycee-choisi" style="margin-top:12px; font-weight:bold; color:var(--vert);"></p>
+        <div id="t-avertissement"></div>
+      </div>
+      <button type="submit" id="btn-envoyer-transfert" class="btn-vert">Envoyer ma demande</button>
+      <p id="message-transfert" class="cache"></p>
+    </form>
+  </section>
+</div>
+
+<div id="ecran-lycees" class="ecran">
+  <section>
+    <button class="btn-retour" onclick="fermerListeLycees()">← Retour au formulaire</button>
+    <h2>🏫 Choisissez votre établissement</h2>
+    <p style="color:var(--gris); margin-bottom:18px;">Sélectionnez l'établissement dans la liste ci-dessous.</p>
+    <div class="filtres" id="filtres">
+      <button class="filtre-btn actif" data-filtre="tout">Tout (30)</button>
+      <button class="filtre-btn" data-filtre="public">🏛️ Public</button>
+      <button class="filtre-btn" data-filtre="prive">🏢 Privé</button>
+      <button class="filtre-btn" data-filtre="dispo">✅ Disponibles</button>
+      <button class="filtre-btn" data-filtre="plein">⛔ Plein</button>
+    </div>
+    <div id="liste-lycees"></div>
+  </section>
+</div>
+
+<div id="ecran-confirmation" class="ecran">
+  <section>
+    <h2 id="titre-confirmation">✅ Votre demande a bien été envoyée</h2>
+    <div class="carte-contact" id="bloc-contact">
+      <h3 id="nom-etab-confirm"></h3>
+      <div id="contacts-confirm"></div>
+      <p class="securite">
+        Pour plus de sécurité, vous pouvez contacter l'établissement
+        en question si votre demande tarde un peu trop.
+      </p>
+    </div>
+    <div class="fiche" id="fiche-imprimable">
+      <h3>📄 Fiche récapitulative</h3>
+      <p><strong>Type de demande :</strong> <span id="f-type"></span></p>
+      <p><strong>Élève :</strong> <span id="f-nom"></span></p>
+      <p><strong>Classe visée :</strong> <span id="f-classe"></span></p>
+      <p><strong>Établissement visé :</strong> <span id="f-etab"></span></p>
+      <p><strong>Secteur :</strong> <span id="f-secteur"></span></p>
+      <p><strong>Statut :</strong> <span id="f-statut"></span></p>
+      <p><strong>Établissement d'origine :</strong> <span id="f-origine"></span></p>
+      <p><strong>Parent / tuteur :</strong> <span id="f-parent"></span></p>
+      <p><strong>Téléphone :</strong> <span id="f-tel"></span></p>
+      <p class="mention">
+        ✅ Cet élève est passé par notre site pour obtenir une demande
+        de place ou de transfert.
+      </p>
+    </div>
+    <div class="actions">
+      <button onclick="window.print()" class="btn-vert">🖨️ Imprimer ma fiche</button>
+      <button onclick="allerVers('accueil')" class="btn-secondaire">🏠 Retour à l'accueil</button>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<script>
+const URL_APPS_SCRIPT = "https://script.google.com/macros/s/AKfycbzlAh1kkjLWAOo9LZcsMgvUaMvenPbSBKlYkS4-_FmcdlZt_c7cfWpyCYYjXWox_dKL/exec";
+
+const CONTACT_SNEC = {
+  label: "SNEC - Secrétariat National de l'Enseignement Catholique",
+  tel: ["+226 51 72 01 00"],
+  email: "snecsecretariat@educationcatholiquebf.org"
+};
+const CONTACT_DREPS = {
+  label: "DREPS Kadiogo / MENAPLN",
+  tel: ["+226 25 32 48 70", "+226 25 32 48 71"],
+  email: "dcpmmena@gmail.com"
+};
+
+const etablissements = [
+  // ===== 15 LYCÉES PUBLICS =====
+  { nom: "Lycée Philippe Zinda Kaboré (LPZK)", secteur: "Secteur 1", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée Bogodogo", secteur: "Secteur 28", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée Nelson Mandela", secteur: "Secteur 13", type: "Public", statut: "Plein", contactPerso: ["+226 25 30 16 07", "+226 25 32 45 44"] },
+  { nom: "Lycée Marien N'Gouabi", secteur: "Secteur 9", type: "Public", statut: "Plein", contactPerso: ["+226 25 30 61 20"] },
+  { nom: "Lycée Municipal de Nongr-Massom", secteur: "Secteur 17 (Tanghin)", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée Mixte de Gounghin", secteur: "Secteur 17", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée Municipal de Signoghin", secteur: "Secteur 22", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée Départemental de Ouagadougou", secteur: "Secteur 1", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée de Kamboinsin", secteur: "Arrondissement 9", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée de Pabré", secteur: "Commune rurale de Pabré", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée d'Enseignement Général de Ouaga 2000", secteur: "Secteur 54", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée Municipal Vénégré", secteur: "Secteur 10", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée Yamkéta", secteur: "Arrondissement 9", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée de Zagtouli", secteur: "Arrondissement 7", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+  { nom: "Lycée de Karpala", secteur: "Secteur 51", type: "Public", statut: "Plein", contactPerso: ["+226 25 32 48 70"] },
+
+  // ===== 15 ÉTABLISSEMENTS PRIVÉS =====
+  { nom: "Collège Privé Saint Jean Baptiste de La Salle", secteur: "Secteur 1", type: "Catholique", statut: "Plein", contactPerso: ["+226 25 33 38 95", "+226 51 72 01 00"] },
+  { nom: "Collège Privé Notre Dame de Kologh-Naba", secteur: "Secteur 11", type: "Catholique", statut: "Plein", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Ouaga 3 S (ex-Dimdolobsom)", secteur: "Secteur 11", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Sacré-Cœur de Dapoya", secteur: "Secteur 12", type: "Catholique", statut: "Plein", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Protestant AD", secteur: "Secteur 13", type: "Privé", statut: "Plein", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé La Bruyère Sainte Isabelle", secteur: "Secteur 14", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Saint Moïse", secteur: "Secteur 17", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Scob Wend Benedo", secteur: "Secteur 17", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé La Colombe II", secteur: "Secteur 21", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Le Repère (ex-Aïssa)", secteur: "Secteur 21", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Notre Dame de l'Espérance", secteur: "Secteur 22", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Collège Privé Sainte Marie Faustin", secteur: "Secteur 24 (Silmissin)", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Lycée Privé L'Excellence de Bossa", secteur: "Secteur 32", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] },
+  { nom: "Groupe Scolaire Saint Viateur", secteur: "Secteur 12", type: "Catholique", statut: "Dispo", contactPerso: ["+226 25 36 48 12", "+226 51 72 01 00"] },
+  { nom: "Collège Privé Sainte Rita Carcias", secteur: "Karpala (Secteur 51)", type: "Privé", statut: "Dispo", contactPerso: ["+226 51 72 01 00"] }
+];
+
+let etablissementChoisi = null;
+let formulaireActif = null;
+let filtreActif = "tout";
+
+function allerVers(ecran) {
+  document.querySelectorAll(".ecran").forEach(e => e.classList.remove("actif"));
+  document.getElementById("ecran-" + ecran).classList.add("actif");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function ouvrirListeLycees(contexte) {
+  formulaireActif = contexte;
+  filtreActif = "tout";
+  document.querySelectorAll(".filtre-btn").forEach(b => {
+    b.classList.toggle("actif", b.dataset.filtre === "tout");
+  });
+  afficherListe();
+  allerVers("lycees");
+}
+
+function afficherListe() {
+  const container = document.getElementById("liste-lycees");
+  container.innerHTML = "";
+  const listeFiltree = etablissements.filter(e => {
+    if (filtreActif === "tout") return true;
+    if (filtreActif === "public") return
+    if (filtreActif === "prive") return e.type !== "Public";
+    if (filtreActif === "dispo") return e.statut === "Dispo";
+    if (filtreActif === "plein") return e.statut === "Plein";
+    return true;
+  });
+
+  listeFiltree.forEach(etab => {
+    const carte = document.createElement("div");
+    carte.className = "carte-etab";
+
+    const badgeType = etab.type === "Public"
+      ? '<span class="badge badge-public">Public</span>'
+      : etab.type === "Catholique"
+        ? '<span class="badge badge-catho">Catho</span>'
+        : '<span class="badge badge-prive">Privé</span>';
+
+    const badgeStatut = etab.statut === "Plein"
+      ? '<span class="badge badge-plein">Plein</span>'
+      : '<span class="badge badge-dispo">Dispo</span>';
+
+    carte.innerHTML = `
+      <div class="nom"><strong>${etab.nom}</strong> ${badgeType} ${badgeStatut}</div>
+      <div class="secteur">📍 ${etab.secteur}</div>
+    `;
+    carte.addEventListener("click", () => selectionnerLycee(etab));
+    container.appendChild(carte);
+  });
+}
+
+document.querySelectorAll(".filtre-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    filtreActif = btn.dataset.filtre;
+    document.querySelectorAll(".filtre-btn").forEach(b => b.classList.remove("actif"));
+    btn.classList.add("actif");
+    afficherListe();
+  });
+});
+
+function selectionnerLycee(etab) {
+  etablissementChoisi = etab;
+  const suffixe = formulaireActif === "place" ? "p" : "t";
+
+  document.getElementById(suffixe + "-lycee-choisi").textContent =
+    "✅ " + etab.nom + " (" + etab.secteur + ")";
+
+  const avert = document.getElementById(suffixe + "-avertissement");
+  if (etab.statut === "Plein") {
+    avert.innerHTML = `<div class="avertissement-plein">⚠️ Attention : cet établissement est indiqué "Plein". Vous pouvez toujours envoyer votre demande, mais les places sont très limitées.</div>`;
+  } else {
+    avert.innerHTML = `<div class="avertissement-dispo">✅ Cet établissement est indiqué "Disponible" — votre demande a de bonnes chances d'aboutir.</div>`;
+  }
+
+  allerVers(formulaireActif);
+}
+
+function fermerListeLycees() {
+  allerVers(formulaireActif);
+}
+
+document.getElementById("form-place").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!etablissementChoisi) { alert("⚠️ Veuillez choisir un établissement."); return; }
+  await envoyerDemande({
+    btnId: "btn-envoyer-place",
+    msgId: "message-place",
+    donnees: {
+      typeDemande: "Demande de place",
+      nom: document.getElementById("p-nom").value.trim(),
+      prenom: document.getElementById("p-prenom").value.trim(),
+      classe: document.getElementById("p-classe").value,
+      origine: document.getElementById("p-origine").value.trim(),
+      parent: document.getElementById("p-parent").value.trim(),
+      tel: document.getElementById("p-tel").value.trim(),
+      etablissement: etablissementChoisi.nom,
+      secteur: etablissementChoisi.secteur,
+      type: etablissementChoisi.type,
+      statut: etablissementChoisi.statut
+    }
+  });
+});
+
+document.getElementById("form-transfert").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if (!etablissementChoisi) { alert("⚠️ Veuillez choisir un établissement."); return; }
+  await envoyerDemande({
+    btnId: "btn-envoyer-transfert",
+    msgId: "message-transfert",
+    donnees: {
+      typeDemande: "Demande de transfert",
+      nom: document.getElementById("t-nom").value.trim(),
+      prenom: document.getElementById("t-prenom").value.trim(),
+      classe: document.getElementById("t-classe").value,
+      origine: document.getElementById("t-origine").value.trim(),
+      parent: document.getElementById("t-parent").value.trim(),
+      tel: document.getElementById("t-tel").value.trim(),
+      etablissement: etablissementChoisi.nom,
+      secteur: etablissementChoisi.secteur,
+      type: etablissementChoisi.type,
+      statut: etablissementChoisi.statut
+    }
+  });
+});
+
+async function envoyerDemande({ btnId, msgId, donnees }) {
+  const btn = document.getElementById(btnId);
+  const msg = document.getElementById(msgId);
+
+  btn.disabled = true;
+  btn.textContent = "Envoi en cours...";
+  msg.className = "cache";
+
+  try {
+    await fetch(URL_APPS_SCRIPT, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(donnees)
+    });
+
+    afficherConfirmation(donnees);
+    btn.disabled = false;
+    btn.textContent = "Envoyer ma demande";
+
+  } catch (err) {
+    console.error(err);
+    msg.className = "msg-err";
+    msg.textContent = "❌ Une erreur est survenue. Vérifiez votre connexion et réessayez.";
+    btn.disabled = false;
+    btn.textContent = "Envoyer ma demande";
+  }
+}
+
+function afficherConfirmation(d) {
+  document.getElementById("titre-confirmation").textContent =
+    "✅ " + d.typeDemande + " envoyée";
+  document.getElementById("nom-etab-confirm").textContent = d.etablissement;
+
+  const contactsDiv = document.getElementById("contacts-confirm");
+  contactsDiv.innerHTML = "";
+  const etab = etablissementChoisi;
+
+  if (etab.contactPerso && etab.contactPerso.length > 0) {
+    etab.contactPerso.forEach(tel => {
+      contactsDiv.innerHTML += `<p class="contact-line">📞 ${tel}</p>`;
+    });
+  }
+
+  if (etab.type === "Catholique") {
+    contactsDiv.innerHTML += `<p style="margin-top:12px;"><strong>📩 En complément — ${CONTACT_SNEC.label} :</strong></p>`;
+    CONTACT_SNEC.tel.forEach(tel => contactsDiv.innerHTML += `<p class="contact-line">📞 ${tel}</p>`);
+    contactsDiv.innerHTML += `<p class="contact-line">✉️ <a href="mailto:${CONTACT_SNEC.email}">${CONTACT_SNEC.email}</a></p>`;
+  } else if (etab.type === "Public") {
+    contactsDiv.innerHTML += `<p style="margin-top:12px;"><strong>📩 En complément — ${CONTACT_DREPS.label} :</strong></p>`;
+    CONTACT_DREPS.tel.forEach(tel => contactsDiv.innerHTML += `<p class="contact-line">📞 ${tel}</p>`);
+    contactsDiv.innerHTML += `<p class="contact-line">✉️ <a href="mailto:${CONTACT_DREPS.email}">${CONTACT_DREPS.email}</a></p>`;
+  }
+
+  document.getElementById("f-type").textContent = d.typeDemande;
+  document.getElementById("f-nom").textContent = `${d.nom} ${d.prenom}`;
+  document.getElementById("f-classe").textContent = d.classe;
+  document.getElementById("f-etab").textContent = d.etablissement;
+  document.getElementById("f-secteur").textContent = d.secteur;
+  document.getElementById("f-statut").textContent = d.statut;
+  document.getElementById("f-origine").textContent = d.origine;
+  document.getElementById("f-parent").textContent = d.parent;
+  document.getElementById("f-tel").textContent = d.tel;
+
+  allerVers("confirmation");
+}
+</script>
+
+</body>
+</html>
